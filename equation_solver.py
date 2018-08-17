@@ -7,6 +7,7 @@ This is a temporary script file.
 
 import numpy as np
 import scipy as sp
+#import scipy.interpolate
 
 
 def read_input(filename):
@@ -40,8 +41,8 @@ def read_input(filename):
     xMin = float(data[1][0])
     xMax = float(data[1][1])
     nPoint = int(data[1][2])
-    EV_first = float(data[2][0])
-    EV_last = float(data[2][1])
+    EV_first = int(data[2][0])
+    EV_last = int(data[2][1])
     interpolation_type = str(data[3][0])
     interpolation_numbers = int(data[4][0])
     potential_declerations=np.zeros([len(data)-5, 2])
@@ -50,7 +51,7 @@ def read_input(filename):
 
     return mass, xMin, xMax, nPoint, EV_first, EV_last, interpolation_type, interpolation_numbers, potential_declerations
 
-
+mass, xMin, xMax, nPoint, EV_first, EV_last, interpolation_type, interpolation_numbers, potential_declerations = read_input("schroedinger.inp")
 def potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerations):
     """
     discretises the potential by using linear/cubic/polynomial interpolation and saves the results into a file potential.dat 
@@ -74,21 +75,24 @@ def potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerat
             
     potential_dat=np.array(list(zip(x_values, y_values)))
     np.savetxt("potential.dat", potential_dat)
+    return x_values, y_values
+    
+    
+def solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last):
+    distance=(xMax-xMin)/nPoint
+    alpha=1/(mass*distance**2)
+    x_values, potential = potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerations)
+    matrix=np.diag(potential+np.ones(nPoint)*alpha)-np.diag(np.ones(nPoint-1)*alpha/2, 1)-np.diag(np.ones(nPoint-1)*alpha/2, -1)
+    eigenvalues, eigenvektors = sp.linalg.eigh(matrix, eigvals=(EV_first, EV_last))
+    wafefuncs_dat=np.zeros((nPoint, EV_last+1))
+    wafefuncs_dat[:,0]=x_values
+    wafefuncs_dat[:,1:]=eigenvektors
+    np.savetxt("energies.dat", eigenvalues)
+    np.savetxt("wavefuncs.dat", wafefuncs_dat)
+    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerations)
+solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last)
 
 
 
