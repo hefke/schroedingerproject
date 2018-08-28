@@ -7,9 +7,8 @@ This is a temporary script file.
 
 import numpy as np
 import scipy as sp
-import scipy.interpolate
-import scipy.linalg
-#from scipy.linalg import eigh_tridiagonal
+#import scipy.interpolate
+
 
 def read_input(filename):
     """
@@ -63,7 +62,6 @@ def potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerat
         nPoint: number of points between xMin and xMax
         interpolation_type: type of interpolation
         potential_declerations: array of points defining the potnetial
-
     """
     x_values=np.linspace(xMin, xMax, nPoint)
     if interpolation_type=="linear":
@@ -80,6 +78,18 @@ def potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerat
     
     
 def solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last):
+    """
+    Calculates the wavefunctions and energies by expressing the Hamilton-Operator as Matrix and solving its eigenvalue problem and saves them into a file.
+    Also it calculates the expectation values of the x-variable and the postition blur and saves them into a file.
+    
+    Args:
+        nPoint: number of points between xMin and xMax
+        mass: mass of the particle
+        xMin: minimal x-value
+        xMax: maximal x-value
+        EV_first: first eigenvalue to be printed
+        EV_last: last eigenvalue to be printed
+    """
     Delta=(xMax-xMin)/nPoint
     alpha=1/(mass*(Delta**2))
     x_values, potential = potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerations)
@@ -91,26 +101,17 @@ def solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last):
     wafefuncs_dat[:,1:]=eigenvektors
     np.savetxt("energies.dat", eigenvalues)
     np.savetxt("wavefuncs.dat", wafefuncs_dat)
+    number_EV=EV_last-EV_first
     
-    expvalues_x=np.zeros(EV_last-EV_first+1)
-    expvalues_x_square=np.zeros(EV_last-EV_first+1)
-    position_blur=np.zeros(EV_last-EV_first+1)
+    expvalues_x=np.zeros(number_EV+1)
+    expvalues_x_square=np.zeros(number_EV+1)
+    position_blur=np.zeros(number_EV+1)
 
-    for jj in range(EV_last-EV_first+1):
-        for ii in range(nPoint):
-            sum_x=x_values[ii]*eigenvektors[ii,jj]**2
-            expvalues_x[jj]+=sum_x*Delta
-            
-            sum_x_square=(x_values[ii]**2)*(eigenvektors[ii,jj]**2)
-            expvalues_x_square[jj]+=sum_x_square*Delta
+    for jj in range(number_EV+1):
+        expvalues_x[jj]=np.sum((x_values*eigenvektors[:,jj]**2))
+        expvalues_x_square[jj]=np.sum((x_values**2*eigenvektors[:,jj]**2))
         position_blur[jj]=(expvalues_x_square[jj]-expvalues_x[jj]**2)**(0.5)
-   
-    
-    print(expvalues_x, expvalues_x_square, position_blur)
-
-solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last)
-
-
-
-
-
+    expvalues_dat=np.zeros((number_EV+1, 2))
+    expvalues_dat[:,0]=expvalues_x
+    expvalues_dat[:,1]=position_blur
+    np.savetxt("expvalues.dat", expvalues_dat)
