@@ -7,8 +7,9 @@ This is a temporary script file.
 
 import numpy as np
 import scipy as sp
-#import scipy.interpolate
-
+import scipy.interpolate
+import scipy.linalg
+#from scipy.linalg import eigh_tridiagonal
 
 def read_input(filename):
     """
@@ -79,22 +80,35 @@ def potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerat
     
     
 def solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last):
-    distance=(xMax-xMin)/nPoint
-    alpha=1/(mass*distance**2)
+    Delta=(xMax-xMin)/nPoint
+    alpha=1/(mass*(Delta**2))
     x_values, potential = potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerations)
     matrix=np.diag(potential+np.ones(nPoint)*alpha)-np.diag(np.ones(nPoint-1)*alpha/2, 1)-np.diag(np.ones(nPoint-1)*alpha/2, -1)
-    eigenvalues, eigenvektors = sp.linalg.eigh(matrix, eigvals=(EV_first, EV_last))
+    eigenvalues, eigenvektors = sp.linalg.eigh(matrix, eigvals=(EV_first-1, EV_last-1))
+
     wafefuncs_dat=np.zeros((nPoint, EV_last+1))
     wafefuncs_dat[:,0]=x_values
     wafefuncs_dat[:,1:]=eigenvektors
     np.savetxt("energies.dat", eigenvalues)
     np.savetxt("wavefuncs.dat", wafefuncs_dat)
     
+    expvalues_x=np.zeros(EV_last-EV_first+1)
+    expvalues_x_square=np.zeros(EV_last-EV_first+1)
+    position_blur=np.zeros(EV_last-EV_first+1)
 
-#potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerations)
+    for jj in range(EV_last-EV_first+1):
+        for ii in range(nPoint):
+            sum_x=x_values[ii]*eigenvektors[ii,jj]**2
+            expvalues_x[jj]+=sum_x*Delta
+            
+            sum_x_square=(x_values[ii]**2)*(eigenvektors[ii,jj]**2)
+            expvalues_x_square[jj]+=sum_x_square*Delta
+        position_blur[jj]=(expvalues_x_square[jj]-expvalues_x[jj]**2)**(0.5)
+   
+    
+    print(expvalues_x, expvalues_x_square, position_blur)
+
 solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last)
-
-
 
 
 
