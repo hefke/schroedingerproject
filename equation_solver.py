@@ -7,7 +7,7 @@ This is a temporary script file.
 
 import numpy as np
 import scipy as sp
-#import scipy.interpolate
+import scipy.interpolate
 
 
 def read_input(filename):
@@ -54,7 +54,7 @@ def read_input(filename):
 mass, xMin, xMax, nPoint, EV_first, EV_last, interpolation_type, interpolation_numbers, potential_declerations = read_input("schroedinger.inp")
 def potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerations):
     """
-    discretises the potential by using linear/cubic/polynomial interpolation and saves the results into a file potential.dat 
+    discretises the potential by using linear/cubic/polynomial interpolation and saves the results into a file potential.dat
 
     Args:
         xMin: minimal x-value
@@ -71,13 +71,13 @@ def potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerat
         y_values=sp.interpolate.barycentric_interpolate(potential_declerations[:,0], potential_declerations[:,1], x_values)
     elif interpolation_type=="cspline":
         y_values=sp.interpolate.CubicSpline(potential_declerations[:,0], potential_declerations[:,1])(x_values)
-            
-            
+
+
     potential_dat=np.array(list(zip(x_values, y_values)))
     np.savetxt("potential.dat", potential_dat)
     return x_values, y_values
-    
-    
+
+
 def solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last):
     distance=(xMax-xMin)/nPoint
     alpha=1/(mass*distance**2)
@@ -89,7 +89,7 @@ def solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last):
     wafefuncs_dat[:,1:]=eigenvektors
     np.savetxt("energies.dat", eigenvalues)
     np.savetxt("wavefuncs.dat", wafefuncs_dat)
-    
+
 
 #potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerations)
 solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last)
