@@ -1,9 +1,6 @@
 import numpy as np
 import scipy as sp
-<<<<<<< HEAD
-#import scipy.interpolate
-=======
->>>>>>> fdea7634b07918f6b0feccaf1628a6c5804d0ccc
+
 
 
 def read_input(filename):
@@ -71,15 +68,8 @@ def potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerat
     potential_dat=np.array(list(zip(x_values, y_values)))
     np.savetxt("potential.dat", potential_dat)
     return x_values, y_values
-<<<<<<< HEAD
-    
-    
-def solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last):
-=======
-
 
 def solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last, x_values, potential):
->>>>>>> fdea7634b07918f6b0feccaf1628a6c5804d0ccc
     """
     Calculates the wavefunctions and energies by expressing the Hamilton-Operator as Matrix and solving its eigenvalue problem and saves them into a file.
     Also it calculates the expectation values of the x-variable and the postition blur and saves them into a file.
