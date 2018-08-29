@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Spyder Editor
-
-This is a temporary script file.
-"""
-
 import numpy as np
 import scipy as sp
-#import scipy.interpolate
 
 
 def read_input(filename):
@@ -44,17 +36,17 @@ def read_input(filename):
     EV_first = int(data[2][0])
     EV_last = int(data[2][1])
     interpolation_type = str(data[3][0])
-    interpolation_numbers = int(data[4][0])
-    potential_declerations=np.zeros([len(data)-5, 2])
+    interpolation_number = int(data[4][0])
+    potential_declerations=np.zeros([interpolation_number, 2])
     for ii in range(0, len(data)-5):
         potential_declerations[ii]=potential_declerations[ii]+np.asarray(data[ii+5], dtype=float)
 
-    return mass, xMin, xMax, nPoint, EV_first, EV_last, interpolation_type, interpolation_numbers, potential_declerations
+    return mass, xMin, xMax, nPoint, EV_first, EV_last, interpolation_type, potential_declerations
 
-mass, xMin, xMax, nPoint, EV_first, EV_last, interpolation_type, interpolation_numbers, potential_declerations = read_input("schroedinger.inp")
+
 def potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerations):
     """
-    discretises the potential by using linear/cubic/polynomial interpolation and saves the results into a file potential.dat 
+    discretises the potential by using linear/cubic/polynomial interpolation and saves the results into a file potential.dat
 
     Args:
         xMin: minimal x-value
@@ -70,14 +62,14 @@ def potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerat
         y_values=sp.interpolate.barycentric_interpolate(potential_declerations[:,0], potential_declerations[:,1], x_values)
     elif interpolation_type=="cspline":
         y_values=sp.interpolate.CubicSpline(potential_declerations[:,0], potential_declerations[:,1])(x_values)
-            
-            
+
+
     potential_dat=np.array(list(zip(x_values, y_values)))
     np.savetxt("potential.dat", potential_dat)
     return x_values, y_values
-    
-    
-def solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last):
+
+
+def solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last, x_values, potential):
     """
     Calculates the wavefunctions and energies by expressing the Hamilton-Operator as Matrix and solving its eigenvalue problem and saves them into a file.
     Also it calculates the expectation values of the x-variable and the postition blur and saves them into a file.
@@ -92,7 +84,6 @@ def solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last):
     """
     Delta=(xMax-xMin)/nPoint
     alpha=1/(mass*(Delta**2))
-    x_values, potential = potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerations)
     matrix=np.diag(potential+np.ones(nPoint)*alpha)-np.diag(np.ones(nPoint-1)*alpha/2, 1)-np.diag(np.ones(nPoint-1)*alpha/2, -1)
     eigenvalues, eigenvektors = sp.linalg.eigh(matrix, eigvals=(EV_first-1, EV_last-1))
 
