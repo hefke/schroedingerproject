@@ -9,5 +9,5 @@ else:
     fname_full = os.path.join(directory_input_dat, 'schroedinger.inp')
         
 mass, xMin, xMax, nPoint, EV_first, EV_last, interpolation_type, potential_declerations = eq.read_input(fname_full)
-x_values, potential = eq.potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerations)
+x_values, potential, drei = eq.potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerations)
 eq.solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last, x_values, potential)

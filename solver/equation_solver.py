@@ -58,16 +58,16 @@ def potential_discret(xMin, xMax, nPoint, interpolation_type, potential_declerat
     """
     x_values=np.linspace(xMin, xMax, nPoint)
     if interpolation_type=="linear":
-        y_values=np.interp(x_values, potential_declerations[:,0], potential_declerations[:,1])
+        potential=np.interp(x_values, potential_declerations[:,0], potential_declerations[:,1])
     elif interpolation_type=="polynomial":
-        y_values=sp.interpolate.barycentric_interpolate(potential_declerations[:,0], potential_declerations[:,1], x_values)
+        potential=sp.interpolate.barycentric_interpolate(potential_declerations[:,0], potential_declerations[:,1], x_values)
     elif interpolation_type=="cspline":
-        y_values=sp.interpolate.CubicSpline(potential_declerations[:,0], potential_declerations[:,1])(x_values)
+        potential=sp.interpolate.CubicSpline(potential_declerations[:,0], potential_declerations[:,1])(x_values)
             
             
-    potential_dat=np.array(list(zip(x_values, y_values)))
+    potential_dat=np.array(list(zip(x_values, potential)))
     np.savetxt("potential.dat", potential_dat)
-    return x_values, y_values
+    return x_values, potential, potential_dat
 
 def solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last, x_values, potential):
     """
@@ -85,7 +85,7 @@ def solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last, x_values, po
     Delta=(xMax-xMin)/nPoint
     alpha=1/(mass*(Delta**2))
     matrix=np.diag(potential+np.ones(nPoint)*alpha)-np.diag(np.ones(nPoint-1)*alpha/2, 1)-np.diag(np.ones(nPoint-1)*alpha/2, -1)
-    eigenvalues, eigenvektors = sp.linalg.eigh(matrix, eigvals=(EV_first-1, EV_last-1))
+    eigenvalues, eigenvektors = sp.linalg.eigh(matrix, eigvals = (EV_first-1, EV_last-1))
 
     wafefuncs_dat=np.zeros((nPoint, EV_last+1))
     wafefuncs_dat[:,0]=x_values
@@ -106,3 +106,4 @@ def solve_schroedinger(nPoint, mass, xMin, xMax, EV_first, EV_last, x_values, po
     expvalues_dat[:,0]=expvalues_x
     expvalues_dat[:,1]=position_blur
     np.savetxt("expvalues.dat", expvalues_dat)
+    return eigenvalues

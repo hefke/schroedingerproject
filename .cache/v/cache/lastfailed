@@ -1,0 +1,8 @@
+{
+  "solver/solver_test.py::test_asym_well": true,
+  "solver/solver_test.py::test_double_well_cubic": true,
+  "solver/solver_test.py::test_double_well_linear": true,
+  "solver/solver_test.py::test_finite_well": true,
+  "solver/solver_test.py::test_harm_osz": true,
+  "solver/solver_test.py::test_inf_well": true
+}
