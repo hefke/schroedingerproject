@@ -3,7 +3,7 @@ This module contains all function to solve the schroedinger equation
 """
 import numpy as np
 import scipy as sp
-
+from scipy import interpolate
 
 
 def read_inp(filename):
@@ -67,11 +67,11 @@ def potential_discret(x_min, x_max, n_point, interp_type, potential_decl):
     if interp_type == "linear":
         potential = np.interp(x_values, potential_decl[:, 0], potential_decl[:, 1])
     elif interp_type == "polynomial":
-        potential = sp.interpolate.barycentric_interpolate(potential_decl[:, 0],
-                                                           potential_decl[:, 1], x_values)
+        potential = interpolate.barycentric_interpolate(potential_decl[:, 0],
+                                                        potential_decl[:, 1], x_values)
     elif interp_type == "cspline":
-        potential = sp.interpolate.CubicSpline(potential_decl[:, 0],
-                                               potential_decl[:, 1], bc_type="natural")(x_values)
+        potential = interpolate.CubicSpline(potential_decl[:, 0],
+                                            potential_decl[:, 1], bc_type="natural")(x_values)
     potential_dat = np.array(list(zip(x_values, potential)))
     np.savetxt("potential.dat", potential_dat)
     return potential_dat
