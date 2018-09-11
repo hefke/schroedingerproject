@@ -1,3 +1,11 @@
+"""
+This modul lets the user decide what he wants to plot.
+
+returns:
+    - one limit-array with the values for the lower and upper X and Y boundries
+    - one decision-array that contains the information which data to read in and plot
+    - one namestring for the later headline of the plot """
+    
 
 decision_one_string = input('What do you want to plot? (enter the corresponding number)'
                        + '\n' + 'those are the options:' + '\n' + 
