@@ -1,39 +1,39 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Sep 11 15:12:08 2018
 
-@author: dennis
-"""
+"""This executeable script uses the sglpackage.plotter and matplotlib.pyplot
+modules to create"""
 
 import argparse
 import matplotlib.pyplot as plt
-import sglpackage.readresults as readresults
 import sglpackage.plotter as plotter
 
-_DESCRIPTION = 'hier könnte ihre werbung stehen'
+_DESCRIPTION = 'View the user documentation for more information'
 _PARSER = argparse.ArgumentParser(description=_DESCRIPTION)
 
-_MSG = 'Directory (default: .)'
+_MSG = 'Directory (default: same as the scripts directory)'
 _PARSER.add_argument('-d', '--directory', default='', help=_MSG)
 
-_MSG = 'scalingfactor (default: 1.0)'
+_MSG = 'Scalingfactor (default: 1.0)'
 _PARSER.add_argument('-f', '--scalingfactor', type=float, metavar='NUM',
                      default=1.0, help=_MSG)
 
-_MSG = 'limits in order'
-_PARSER.add_argument('-l', '--limits', default=[None, None, None, None], help=_MSG, type=float,
-                     nargs='+')
+_MSG = 'Axis limits in order: xmin xmax ymin ymax seperated by whitespace'
+_PARSER.add_argument('-l', '--limits', default=[None, None, None, None],
+                     help=_MSG, type=float, nargs='+')
 
 ARGS = _PARSER.parse_args()
+if len(ARGS.limits) != 4:
+    _PARSER.error('Either give no values or exactly four')
+
 DATADIREC = ARGS.directory
 LIMITS = ARGS.limits
 SCALINGNUMBER = ARGS.scalingfactor
 
-readresults.check(DATADIREC)
+plotter.check(DATADIREC)
 
-THEDATA = readresults.readthedata(potdirec=DATADIREC, wfuncsdirec=DATADIREC,
-                                  energiedirec=DATADIREC, expvdirec=DATADIREC)
+THEDATA = plotter.readthedata(potdirec=DATADIREC, wfuncsdirec=DATADIREC,
+                              energiedirec=DATADIREC, expvdirec=DATADIREC)
 
 plt.figure(figsize=[14, 9])
 

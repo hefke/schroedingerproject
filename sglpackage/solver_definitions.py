@@ -1,27 +1,26 @@
 """
-This module contains all function to solve the schroedinger equation
+This module contains all functions which are used to solve the schroedinger equation.
 """
 import numpy as np
 import scipy as sp
 from scipy import interpolate
 
-
 def read_inp(filename):
     """
-    Reads all information from the input file and saves them as variables
+    Reads all informations from the input file and saves them as variables
 
     Args:
         filename: Name of the input file containing the specification of the problem
 
-    Returns:
-        x_min: minimal x-value
-        x_max: maximal x-value
-        n_point: number of points between x_min and x_max
-        ev_first: first eigenvalue to be printed
-        ev_last: last eigenvalue to be printed
-        interp_type: type of interpolation
-        potential_decl: array of points defining the potnetial
-        alpha: constant used fpr the calculation of eigenvalues
+    **return**:
+        * **x_min** - minimal x-value
+        * **x_max** - maximal x-value
+        * **n_point** - number of points between x_min and x_max
+        * **ev_first** - first eigenvalue to be printed
+        * **ev_last** - last eigenvalue to be printed
+        * **interp_type** - type of the interpolation
+        * **potential_decl** - array of points defining the potnetial
+        * **alpha** - constant used for the calculation of the eigenvalues
     """
 
     data = []
@@ -50,7 +49,7 @@ def read_inp(filename):
 def potential_discret(x_min, x_max, n_point, interp_type, potential_decl):
     """
     discretises the potential by using linear/cubic/polynomial interpolation and saves the results
-    into a file potential.dat
+    into a file named potential.dat
 
     Args:
         x_min: minimal x-value
@@ -59,8 +58,8 @@ def potential_discret(x_min, x_max, n_point, interp_type, potential_decl):
         interp_type: type of interpolation
         potential_decl: array of points defining the potnetial
 
-    Returns:
-        potential_dat: array of the x_values in the first column
+    **return**:
+        * **potential_dat** - array of the x_values in the first column \
         and the y-values of the potential in the second column
     """
     x_values = np.linspace(x_min, x_max, n_point)
@@ -78,7 +77,7 @@ def potential_discret(x_min, x_max, n_point, interp_type, potential_decl):
 
 def solve_wavefuncs(n_point, ev_first, ev_last, potential_dat, alpha):
     """
-    Calculates the wavefunctions and energies by expressing the Hamilton-Operator as
+    Calculates the wavefunctions and energies by expressing the Hamilton-Operator as a
     Matrix and solving its eigenvalue problem and saving eingenvalues and
     eigenfunctions in the files energies.dat and wavefuncs.dat
 
@@ -90,9 +89,9 @@ def solve_wavefuncs(n_point, ev_first, ev_last, potential_dat, alpha):
         ev_first: first eigenvalue to be printed
         ev_last: last eigenvalue to be printed
 
-    Returns:
-        eigenvektors: calculated eigenvektros representing the energies
-        eigenvalues: calculated eigenvalues of the problem
+    **return**:
+        * **eigenvektors** - calculated eigenvektros representing the energies
+        * **eigenvalues** - calculated eigenvalues of the problem
     """
     potential = potential_dat[:, 1:]
     main_diag = potential+np.ones(n_point)*alpha
@@ -117,6 +116,9 @@ def solve_expvalues(ev_first, ev_last, potential_dat, eigenvektors):
         ev_last: last eigenvalue to be printed
         potential_dat: array of the potential-coordinates
         eigenvektors: eigenvektros representing the energies of the potential
+
+    **return**:
+        one data file with two columns
     """
     x_values = potential_dat[:, 0]
     number_ev = ev_last-ev_first
@@ -132,3 +134,4 @@ def solve_expvalues(ev_first, ev_last, potential_dat, eigenvektors):
     expvalues_dat[:, 0] = expvalues_x
     expvalues_dat[:, 1] = position_blur
     np.savetxt("expvalues.dat", expvalues_dat)
+    return
