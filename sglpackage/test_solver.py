@@ -4,7 +4,7 @@ Module to test the sduation solver for 6 examples
 
 #!/usr/bin/env python3
 import numpy as np
-import solver_definitions as sd
+import sglpackage.solver_definitions as sd
 
 def test_harm_osz():
     """
